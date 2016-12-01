@@ -42,7 +42,7 @@ function hoistMembers(scope, str) {
   const candidates = [];
   for (name in members) {
     //              times used       net 3 less per       var string weight
-    const savings = (members[name] * (name.length - 3)) - (name.length + 9);
+    const savings = (members[name] * (name.length - 3)) - (name.length + 5);
     if (savings > 3) candidates.push({ name, savings });
   }
   // move higher savings variables up the list so that they get shorter ids, if available
@@ -61,14 +61,15 @@ function hoistMembers(scope, str) {
     }
   });
 
-  let anchor;
-  if (scope.body.body.length && scope.body.body[0].type === 'ExpressionStatement' && scope.body.body[0].expression.value === 'use strict') {
-    anchor = scope.body.body[0].end;
-  } else {
-    anchor = scope.body.start + 1;
-  }
+  const mapped = [];
   for (const name in map) {
-    str.appendLeft(anchor, `var ${map[name]}='${name}';`);
+    mapped.push(`${map[name]}='${name}'`);
+  }
+  if (mapped.length) {
+    str.appendLeft(
+      scope.body.body.length && scope.body.body[0].type === 'ExpressionStatement' && scope.body.body[0].expression.value === 'use strict' ? scope.body.body[0].end : scope.body.start + 1,
+      `var ${mapped.join(',')};`
+    );
   }
 }
 
