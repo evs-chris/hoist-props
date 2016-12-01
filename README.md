@@ -20,7 +20,7 @@ cat someSrc.min.js | hoist-props > someSrc.min.min.js
 hoist-props -i someSrc.min.js -o someSrc.min.min.js
 # in and out files and an out map - --map also works
 hoist-props -i someSrc.min.js -o someSrc.min.min.js -m 
-# mix an match as desired
+# mix and match as desired
 ```
 
 API:
