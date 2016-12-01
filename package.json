@@ -3,6 +3,17 @@
   "version": "0.0.1",
   "license": "MIT",
   "description": "Property access minification without mangling",
+  "main": "index.js",
+  "bin": {
+    "hoist-props": "./bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/evs-chris/hoist-props.git"
+  },
+  "engines": {
+    "node": ">= 6"
+  },
   "dependencies": {
     "acorn": "^4",
     "magic-string": "^0.17"

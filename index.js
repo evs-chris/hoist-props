@@ -4,36 +4,19 @@ const MagicString = require('magic-string');
 
 function hoist(src, opts) {
   opts = opts || {};
-  const ast = acorn.parse(src, { locations: true });
+  const ast = acorn.parse(src);
   const str = new MagicString(src);
 
   const scopes = [];
   // find top level scopes, aka functions
-  findTopScopes(ast, s => scopes.push(s));
+  walk.recursive(ast, {}, {
+    FunctionExpression(n) { scopes.push(n); }
+  });
 
   // hoist applicable member accesses in each scope
   scopes.forEach(s => hoistMembers(s, str));
 
   return { code: str.toString(), map: str.generateMap() };
-}
-
-function findTopScopes(root, cb) {
-  if (root.type === 'FunctionExpression') cb(root);
-  else if (root.expression) findTopScopes(root.expression, cb);
-  else if (root.callee) {
-    findTopScopes(root.callee, cb);
-    const arr = root.arguments;
-    for (let i = 0; i < arr.length; i++) {
-      findTopScopes(arr[i], cb);
-    }
-  }
-  else if (root.argument) findTopScopes(root.argument, cb);
-  else if (root.body || root.arguments) {
-    const arr = root.body || root.arguments;
-    for (let i = 0; i < arr.length; i++) {
-      findTopScopes(arr[i], cb);
-    }
-  }
 }
 
 function hoistMembers(scope, str) {
@@ -68,7 +51,7 @@ function hoistMembers(scope, str) {
   const newIds = generateIdentifiers(identifiers, candidates.length);
 
   const map = Object.create(null);
-  for (let i = 0; i < candidates.length; i++) {
+  for (let i = 0; i < newIds.length; i++) {
     map[candidates[i].name] = newIds[i];
   }
 
