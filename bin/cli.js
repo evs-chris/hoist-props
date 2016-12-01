@@ -18,7 +18,7 @@ while ( arg = args.shift() ) {
   switch (arg) {
     case '-i':
     case '--input':
-      input = fs.createReadStream(args.shift(), { encoding: 'utf8' });
+      input = fs.createReadStream(args.shift());
       break;
 
     case '-o':
