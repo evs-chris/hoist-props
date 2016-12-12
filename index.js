@@ -14,12 +14,16 @@ function hoist(src, opts) {
   });
 
   // hoist applicable member accesses in each scope
-  scopes.forEach(s => hoistMembers(s, str));
+  console.log(opts.whitelist)
+  scopes.forEach(s => hoistMembers(s, str, opts));
 
   return { code: str.toString(), map: str.generateMap() };
 }
 
-function hoistMembers(scope, str) {
+function hoistMembers(scope, str, opts) {
+  opts = opts || {};
+  const whitelist = opts.whitelist;
+  const replace = opts.replace || Object.create(null);
   const identifiers = [];
   const members = {};
 
@@ -29,7 +33,7 @@ function hoistMembers(scope, str) {
       if (!~identifiers.indexOf(n.name)) identifiers.push(n.name);
     },
     MemberExpression(n) {
-      if (!n.computed) {
+      if (!n.computed && (!whitelist || ~whitelist.indexOf(n.property.name)) && !(n.property.name in replace)) {
         if (!(n.property.name in members)) members[n.property.name] = 1;
         else members[n.property.name]++;
       }
@@ -57,7 +61,10 @@ function hoistMembers(scope, str) {
 
   walk.simple(scope, {
     MemberExpression(n) {
-      if (!n.computed && n.property.name in map) str.overwrite(n.property.start - 1, n.property.end, `[${map[n.property.name]}]`);
+      if (!n.computed) {
+        if (n.property.name in map) str.overwrite(n.property.start - 1, n.property.end, `[${map[n.property.name]}]`);
+        else if (n.property.name in replace) str.overwrite(n.property.start, n.property.end, replace[n.property.name]);
+      }
     }
   });
 
