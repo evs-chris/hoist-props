@@ -1,6 +1,6 @@
 {
   "name": "hoist-props",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "description": "Property access minification without mangling",
   "main": "index.js",
