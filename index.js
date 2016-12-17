@@ -14,7 +14,6 @@ function hoist(src, opts) {
   });
 
   // hoist applicable member accesses in each scope
-  console.log(opts.whitelist)
   scopes.forEach(s => hoistMembers(s, str, opts));
 
   return { code: str.toString(), map: str.generateMap() };
