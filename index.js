@@ -1,3 +1,5 @@
+'use strict';
+
 const acorn = require('acorn');
 const walk = require('acorn/dist/walk');
 const MagicString = require('magic-string');
