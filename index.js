@@ -1,3 +1,5 @@
+'use strict';
+
 const acorn = require('acorn');
 const walk = require('acorn/dist/walk');
 const MagicString = require('magic-string');
@@ -43,7 +45,7 @@ function hoistMembers(scope, str, opts) {
   });
 
   const candidates = [];
-  for (name in members) {
+  for (const name in members) {
     //              times used       net 3 less per       var string weight
     const savings = (members[name] * (name.length - 3)) - (name.length + 5);
     if (savings > 3) candidates.push({ name, savings });
